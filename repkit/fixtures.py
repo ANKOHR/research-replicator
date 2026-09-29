@@ -6,6 +6,7 @@ import hashlib
 from pathlib import Path
 
 from .io import write_json, write_text
+from .schema import HONESTY_BOUNDARY
 
 
 PAPER = """# ToyDigits: A Fictional Synthetic Benchmark

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from repkit.io import json_text
 from repkit.extract import extract_file
 from repkit.plan import build_plan
 
@@ -36,3 +37,9 @@ def test_plan_marks_missing_setup_and_hyperparameters_unknown(fixture_files):
 def test_plan_missing_hyperparameter_sections_mark_unknown(fixture_files):
     plan = build_plan(extract_file(fixture_files["missing_hparams"]))
     assert plan["steps"][3]["expected_observations"]["learning_rate"] == "UNKNOWN"
+
+
+def test_plan_reruns_are_byte_identical(fixture_files):
+    first = build_plan(extract_file(fixture_files["paper"]))
+    second = build_plan(extract_file(fixture_files["paper"]))
+    assert json_text(first).encode() == json_text(second).encode()

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .schema import HONESTY_BOUNDARY
+
 
 def _known(value: Any) -> bool:
     return isinstance(value, dict) and "value" in value
@@ -80,6 +82,6 @@ def build_plan(setup: dict[str, Any]) -> dict[str, Any]:
         "plan_version": "1.0",
         "status": "PLANNED",
         "source_schema_version": setup.get("schema_version", "UNKNOWN"),
-        "honesty": "Plan only. Fixture metric emitters perform no model training and do not reproduce published results.",
+        "honesty": f"{HONESTY_BOUNDARY} A plan is not evidence that an experiment ran.",
         "steps": steps,
     }

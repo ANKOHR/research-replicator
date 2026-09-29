@@ -5,6 +5,7 @@ from repkit.extract import extract_file
 
 def test_extracts_every_planted_field_with_source_citations(fixture_files):
     setup = extract_file(fixture_files["paper"])
+    assert "no training runs, no real papers, and no real models" in setup["honesty"]
     assert setup["paper"]["title"]["value"] == "ToyDigits: A Fictional Synthetic Benchmark"
     assert setup["paper"]["title"]["source_section"] == "Document title"
     assert setup["sections"]["experiments"]["status"] == "PRESENT"
@@ -40,3 +41,20 @@ def test_missing_hyperparameters_are_unknown_not_filled(fixture_files):
     assert setup["sections"]["experiments"]["status"] == "PRESENT"
     assert all(value["status"] == "UNKNOWN" for value in setup["hyperparameters"].values())
     assert setup["reported_results"][0]["metric"] == "score"
+
+
+def test_undeclared_tolerance_is_explicit_unknown(fixture_files, tmp_path):
+    markdown = fixture_files["paper"].read_text(encoding="utf-8")
+    markdown = markdown.replace(
+        "| metric | value | unit | tolerance |\n| --- | ---: | --- | ---: |\n| accuracy | 0.77 | fraction | 0.02 |\n| loss | 0.24 | toy-loss-units | 0.05 |",
+        "| metric | value | unit |\n| --- | ---: | --- |\n| accuracy | 0.77 | fraction |\n| loss | 0.24 | toy-loss-units |",
+    )
+    markdown = markdown.replace(
+        "| metric | unit | tolerance |\n| --- | --- | --- |\n| accuracy | fraction | 0.02 |\n| loss | toy-loss-units | 0.05 |",
+        "| metric | unit |\n| --- | --- |\n| accuracy | fraction |\n| loss | toy-loss-units |",
+    )
+    paper = tmp_path / "without-tolerances.md"
+    paper.write_text(markdown, encoding="utf-8")
+    setup = extract_file(paper)
+    assert setup["metrics"][0]["tolerance"] == {"status": "UNKNOWN", "source_section": None}
+    assert setup["reported_results"][0]["tolerance"] == {"status": "UNKNOWN", "source_section": None}

@@ -13,13 +13,11 @@ from .fixtures import create_fixtures
 from .io import RepkitError, json_text, read_json, write_json, write_text
 from .plan import build_plan
 from .report import render_html, render_markdown
+from .schema import HONESTY_BOUNDARY
 from .tracker import run_fixture, track_config
 
 
-HONESTY = (
-    "HONESTY BOUNDARY: synthetic papers and repos only; extraction and planning over declared fixtures; "
-    "no training runs, no real papers, and no real models. run invokes a hash-pinned deterministic CPU metric emitter only."
-)
+HONESTY = f"HONESTY BOUNDARY: {HONESTY_BOUNDARY} run invokes a hash-pinned deterministic CPU metric emitter only."
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -89,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "fixtures":
-            print(json_text({"honesty": "Fictional synthetic fixtures only; no real papers, models, or training runs.", "files": create_fixtures(args.out)}), end="")
+            print(json_text({"honesty": HONESTY_BOUNDARY, "files": create_fixtures(args.out)}), end="")
         elif args.command == "extract":
             setup = extract_file(args.paper)
             if args.state_dir:

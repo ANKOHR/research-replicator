@@ -44,6 +44,14 @@ def test_run_rejects_unmarked_repo(fixture_files, tmp_path):
         run_fixture(tracked["config_id"], tmp_path, state)
 
 
+def test_run_rejects_changed_fixture_script_hash(fixture_files, tmp_path):
+    state = tmp_path / "state"
+    tracked = track_config(fixture_files["config"], state)
+    fixture_files["script"].write_text(fixture_files["script"].read_text(encoding="utf-8") + "# changed\n", encoding="utf-8")
+    with pytest.raises(RepkitError, match="script hash does not match"):
+        run_fixture(tracked["config_id"], fixture_files["repo"], state)
+
+
 def test_comparator_flags_out_of_tolerance_with_reported_and_observed_values(fixture_files):
     setup = extract_file(fixture_files["paper"])
     observed = {"config_id": "cfg-example", "metrics": [
@@ -78,6 +86,16 @@ def test_comparator_marks_unknown_tolerance_incomplete(fixture_files):
     result = compare_records(setup, observed)
     accuracy = next(row for row in result["metrics"] if row["metric"] == "accuracy")
     assert accuracy["status"] == "TOLERANCE_UNKNOWN"
+    assert result["overall_status"] == "INCOMPLETE"
+
+
+def test_comparator_does_not_treat_unknown_units_as_a_match(fixture_files):
+    setup = extract_file(fixture_files["paper"])
+    setup["reported_results"] = setup["reported_results"][:1]
+    setup["reported_results"][0]["unit"] = "UNKNOWN"
+    observed = {"metrics": [{"name": "accuracy", "value": 0.77, "unit": "UNKNOWN"}]}
+    result = compare_records(setup, observed)
+    assert result["metrics"][0]["status"] == "UNIT_UNKNOWN"
     assert result["overall_status"] == "INCOMPLETE"
 
 

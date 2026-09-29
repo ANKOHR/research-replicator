@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from .io import RepkitError, read_json, write_json
+from .schema import HONESTY_BOUNDARY
 
 
 def _canonical(value: Any) -> str:
@@ -75,6 +76,7 @@ def track_config(config_path: str | Path, state_dir: str | Path, reason: str = "
         "timestamp_utc": _timestamp(),
         "reason": reason,
         "changes": changes,
+        "honesty": HONESTY_BOUNDARY,
     }
     history["events"].append(event)
     write_json(root / "configs" / f"{ident}.json", config)
@@ -98,7 +100,7 @@ def run_fixture(config_ident: str, repo_dir: str | Path, state_dir: str | Path, 
     if not manifest_path.is_file():
         raise RepkitError("run accepts declared synthetic fixture repos only. Generate one with 'repkit fixtures'.")
     manifest = read_json(manifest_path)
-    if manifest.get("fixture") is not True or manifest.get("kind") != "synthetic_metric_emitter":
+    if not isinstance(manifest, dict) or manifest.get("fixture") is not True or manifest.get("kind") != "synthetic_metric_emitter":
         raise RepkitError("The repo is not marked as a synthetic metric emitter fixture.")
     script_path = (root / script).resolve()
     try:
@@ -147,6 +149,7 @@ def run_fixture(config_ident: str, repo_dir: str | Path, state_dir: str | Path, 
         "script": script_path.name,
         "timestamp_utc": _timestamp(),
         "execution": "deterministic CPU synthetic metric emitter; no model training",
+        "honesty": HONESTY_BOUNDARY,
     }
     root_state = _state_path(state_dir)
     runs_path = root_state / "runs.json"

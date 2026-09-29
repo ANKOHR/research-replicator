@@ -71,10 +71,11 @@ All fixture names, papers, datasets, models, values, and results are invented fo
 
 ## Setup schema reference
 
-An extraction is JSON with `schema_version`, `paper`, `sections`, `datasets`, `model`, `hyperparameters`, `metrics`, and `reported_results`.
+An extraction is JSON with `schema_version`, `honesty`, `paper`, `sections`, `datasets`, `model`, `hyperparameters`, `metrics`, and `reported_results`.
 
 | Field | Shape | Meaning |
 | --- | --- | --- |
+| `honesty` | string | States the synthetic-only and no-training boundary in machine-readable output. |
 | `paper.title` | sourced value | Title and its source section. |
 | `sections.experiments` | `{status, source_section}` | `PRESENT` only when a recognized experiment section exists. Otherwise `UNKNOWN`. |
 | `datasets` | list of `{name, source_section}` | Dataset names declared under the setup's Datasets heading. |

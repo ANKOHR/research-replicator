@@ -7,12 +7,10 @@ from pathlib import Path
 from typing import Any
 
 from .io import read_json
+from .schema import HONESTY_BOUNDARY
 
 
-HONESTY_BANNER = (
-    "HONESTY BOUNDARY: synthetic papers and repos only; extraction and planning over declared fixtures; "
-    "no training runs, no real papers, and no real models."
-)
+HONESTY_BANNER = f"HONESTY BOUNDARY: {HONESTY_BOUNDARY}"
 
 
 def _optional_json(path: Path, default: Any) -> Any:

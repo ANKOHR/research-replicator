@@ -195,11 +195,13 @@ def extract_text(markdown: str) -> dict[str, Any]:
                 "name": name,
                 "unit": row.get("unit", "UNKNOWN"),
                 "source_section": _field_source(heading),
+                "tolerance": row.get("tolerance", UNKNOWN.copy()),
+                "tolerance_source_section": _field_source(heading) if "tolerance" in row else None,
             }
             if "tolerance" in row:
-                metric["tolerance"] = row["tolerance"]
-                metric["tolerance_source_section"] = _field_source(heading)
                 metric_tolerances[str(name)] = (row["tolerance"], _field_source(heading))
+            else:
+                metric_tolerances[str(name)] = (UNKNOWN.copy(), None)
             metric_rows.append(metric)
         for line in body.splitlines():
             match = re.match(r"\s*[-*+]\s+([^:]+?)\s*:\s*(.*)$", line)
@@ -224,6 +226,9 @@ def extract_text(markdown: str) -> dict[str, Any]:
                 result["tolerance_source_section"] = _field_source(heading)
             elif str(name) in metric_tolerances:
                 result["tolerance"], result["tolerance_source_section"] = metric_tolerances[str(name)]
+            else:
+                result["tolerance"] = UNKNOWN.copy()
+                result["tolerance_source_section"] = None
             reported.append(result)
 
     return SetupRecord(

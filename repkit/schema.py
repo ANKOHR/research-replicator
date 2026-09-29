@@ -7,6 +7,10 @@ from typing import Any
 
 
 UNKNOWN: dict[str, Any] = {"status": "UNKNOWN", "source_section": None}
+HONESTY_BOUNDARY = (
+    "Synthetic papers and repos only; extraction and planning over declared fixtures; "
+    "no training runs, no real papers, and no real models."
+)
 HYPERPARAMETER_FIELDS = (
     "learning_rate",
     "batch_size",
@@ -46,6 +50,7 @@ class SetupRecord:
         }
         return {
             "schema_version": self.schema_version,
+            "honesty": HONESTY_BOUNDARY,
             "paper": {"title": title},
             "sections": {
                 "experiments": {
