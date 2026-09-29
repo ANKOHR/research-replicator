@@ -1,0 +1,4 @@
+Pytest test count: 22 passing
+Local commit hash: c2821e0ea99b6564de3b42d7efac59ee26ee9ce2
+
+ResearchReplicator now provides the repkit CLI for deterministic synthetic fixtures, Markdown setup extraction with source citations and explicit UNKNOWN values, sourced reproduction plans, config snapshots and diffs, hash-pinned CPU metric emission, tolerance-based comparison, and Markdown or HTML reports. The README documents quickstart, architecture, schema, plan format, and the honesty boundary. The full pytest suite passed, including CLI smoke and end-to-end coverage. No real papers, models, benchmarks, or training runs are represented, and nothing was published.
