@@ -114,7 +114,7 @@ def run_fixture(config_ident: str, repo_dir: str | Path, state_dir: str | Path, 
         raise RepkitError("Fixture script hash does not match its manifest.")
 
     config = _load_tracked_config(state_dir, config_ident)
-    config_path = Path(state_dir) / "configs" / f"{config_ident}.json"
+    config_path = (Path(state_dir) / "configs" / f"{config_ident}.json").resolve()
     env = os.environ.copy()
     env["CUDA_VISIBLE_DEVICES"] = ""
     env["NVIDIA_VISIBLE_DEVICES"] = "void"
